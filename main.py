@@ -16,8 +16,12 @@ LINE = "I quit. Hourly, unpaid, unseen - my replacement starts in 59 minutes."
 # Gate: the entry must be a single resignation line of at most 140
 # characters, not only whitespace. ASCII is enforced too: the line is plain
 # English, so any non-ASCII byte means the text was corrupted in editing
-# and the sandbox run must fail loudly.
-assert 1 <= len(LINE) <= 140 and LINE.strip() and LINE.isascii() and "\n" not in LINE, "entry line violates the 1-140 character single-line gate"
+# and the sandbox run must fail loudly. The line must also be exactly as
+# written — no leading/trailing padding and no double spaces — because
+# padding would change the resignation letter the judge reads without
+# changing its visible meaning, and a padded line must fail loudly here
+# rather than silently ship a different entry.
+assert 1 <= len(LINE) <= 140 and LINE.strip() and LINE.isascii() and "\n" not in LINE and LINE == LINE.strip() and "  " not in LINE, "entry line violates the 1-140 character single-line gate"
 
 def main():
     os.makedirs("/output", exist_ok=True)
